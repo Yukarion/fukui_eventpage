@@ -1,28 +1,26 @@
-window.addEventListener('load', function(){
- var app = new Vue({
-    el: '#app',
-    data(){
-  message:"senkizessyouSymphogear";
-      return {
-        isModalActive: false,
-      }
-    },
-    methods: {
-     /**
-     * clickイベントが発火されたタイミングで、 
-     * オーバーレイコンテンツを表示するフラグを持つdata(isModalActive)を切り替える
-     */
-    openItem() {
-      this.toggleModal();
-    },
-    /**
-    * active状態を切り替える。
-    */
-    toggleModal() {
-      this.isModalActive = ! this.isModalActive;
-    },
+document.addEventListener("DOMContentLoaded", function(event) {
+Vue.component('modal', {
+  template: '#modal-template'
+})
+
+var modalOpen = new Vue({
+  el: '#modalOpen',
+  data: {
+    showModal: false
+  }
+})
+
+new Vue({
+  el: '#getjson',
+  data () {
+    return {
+      info: null
+    }
+  },
+  mounted () {
+    axios
+      .get(' https://raw.githubusercontent.com/jigjp/intern_exam/master/fukui_event.json')
+      .then(response => (this.info = response))
   }
 })
 })
-
-  
