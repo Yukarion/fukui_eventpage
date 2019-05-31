@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <link rel="styleseet" href = "css/style.css">
+    <title>fukui_event_webpage</title>
+  </head>
+  <body>
+    <h1 id= "title">
+      福井のイベント情報
+    </h1>
+    <div id="key-serch">
+      <h3>キーワード検索</h3>
+      <input v-model="message" placeholder="キーワードで検索を行います">
+    </div>
+    <div id="category">
+      <h3>カテゴリ検索</h3>
+      <select v-model="selected">
+          <option disabled value="">選択してください</option>
+          <option>A</option>
+          <option>B</option>
+          <option>C</option>
+        </select>
+    </div>
+      <ul id="event-info" class=eventinfo>
+        <li v-for="event in events">
+          <h4 class=event-name>
+            {{event.event_name}}
+          </h4>
+          <h6 id= event-date>
+            {{event.start_date}}～{{event.end_data}}
+          </h6>
+          <div class ="#app">
+            <button class="p-modalBtn" v-on:click="openItem">詳細</button>
+          </div>
+          <div class=modal v-bind class="{active: isModalActive>}">
+            {{message}}
+              <button class="p-modalBtn" v-on:click="openItem">戻る</button>
+          </div>
+        </li>
+      </ul>
+    </div>
+    {{isModalActive}}
+    </div>
+  </body>
+  <script src=main.js defer></script>
+</html>
