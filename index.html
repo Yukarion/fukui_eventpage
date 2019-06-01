@@ -1,82 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8">
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <script src= "https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.js"></script>
-    <link rel="stylesheet" href = "css/style.css">
-    <title>fukui_event_webpage</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>my-project</title>
   </head>
   <body>
-    <h1 id= "title">
-      福井のイベント情報
-    </h1>
-    <div id="key-serch">
-      <h3>キーワード検索</h3>
-      <input v-model="message" placeholder="キーワードで検索を行います">
-    </div>
-    <div id="category">
-      <h3>カテゴリ検索</h3>
-      <select v-model="selected">
-          <option disabled value="">選択してください</option>
-          <option>A</option>
-          <option>B</option>
-          <option>C</option>
-        </select>
-    </div>
-      <ul id="event-info" class="eventinfo">
-        <li v-for="event in events">
-          <h4 id="event-name">{{event.event_name}</h4>
-          <h6 id= "event-date">{{event.start_date}}～{{event.end_data}}</h6>
-          <!--modal from vue.js official-->
-          <script type="text/x-template" id="modal-template">
-            <transition name="modal">
-              <div class="modal-mask">
-                <div class="modal-wrapper">
-                  <div class="modal-container">
-                    <div class="modal-header">
-                      <slot name="header">
-                        default header
-                      </slot>
-                    </div>
-          
-                    <div class="modal-body">
-                      <slot name="body">
-                        default body
-                      </slot>
-                    </div>
-          
-                    <div class="modal-footer">
-                      <slot name="footer">
-                        default footer
-                        <button class="modal-default-button" @click="$emit('close')">
-                          閉じる
-                        </button>
-                      </slot>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </transition>
-          </script>
-          
-          <!-- app -->
-          <div id="modalOpen">
-            <button id="show-modal" @click="showModal = true">詳細</button>
-            <!-- use the modal component, pass in the prop -->
-            <modal v-if="showModal" @close="showModal = false">
-              <!--
-                you can use custom content here to overwrite
-                default content
-              -->
-              <h3 slot="header">custom header</h3>
-            </modal>
-          </div>
-        </li>
-      </ul>
-    <div id= "getjson">
-    {{info}}
-    </div>
+    <noscript>
+      <strong>We're sorry but my-project doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+    </noscript>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
   </body>
-  <script src="main.js" defer></script>
 </html>
