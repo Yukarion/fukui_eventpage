@@ -1,9 +1,23 @@
 <template>
     <ul id="event-info" class="eventinfo">
-        <li v-for="event in events" v-bind:key= "event.id">
-          <h4 id="event-name">{{event.event_name}</h4>
-          <h6 id= "event-date">{{event.start_date}}～{{event.end_data}}</h6>
-          <!--modal from vue.js official-->
+        <li v-for="rolling in roll" v-bind:key= "rolling.id" >
+          <h4 id="event-name">{{put(rolling).eventname}}</h4>
+          <h6 id= "event-date">{{put(rolling).eventstart_date}}～{{put(rolling).eventend_date}}</h6>
+          <div id="modalOpen">
+            <button id="show-modal" v-on:click="showModal = true,putdescription(rolling)">詳細</button>
+            <modal v-if="showModal" v-on:close="showModal = false">
+              <h3 slot="header">{{eventname}}</h3>
+              <h2 slot="body">
+                <p id="description">内容：{{event.description}}</p>
+                <p id="category">カテゴリ：{{event.category}}</p>
+                <p id="remarks">備考：{{event.remarks}}</p>
+                <p id="event_place">場所：{{event.event_place}}</p>
+                <p id="event_date">日時：{{event.start_date}}～{{event.end_date}}</p>
+                </h2>
+            </modal>
+          </div>
+        </li>
+                  <!--modal from vue.js official-->
           <script type="text/x-template" id="modal-template">
             <transition name="modal">
               <div class="modal-mask">
@@ -32,19 +46,6 @@
               </div>
             </transition>
           </script>
-          <!-- app -->
-          <div id="modalOpen">
-            <button id="show-modal" v-on:click="showModal = true">詳細</button>
-            <!-- use the modal component, pass in the prop -->
-            <modal v-if="showModal" v-on:close="showModal = false">
-              <!--
-                you can use custom content here to overwrite
-                default content
-              -->
-              <h3 slot="header">custom header</h3>
-            </modal>
-          </div>
-        </li>
       </ul>
 </template>
 
@@ -53,13 +54,36 @@ import Vue from 'vue'
 Vue.component('modal', {
   template: '#modal-template'
 })
-var modalopen = new Vue({ // eslint-disable-line
-  el: '#modalOpen',
-  data: {
-    showModal: false
-  }
-})
 export default {
+  data () {
+    return {
+      showModal: false,
+      event: {},
+      eventname: {},
+      eventstart_date: {},
+      eventend_date: {},
+      index: 0 
+    }
+  },
+  props: ["roll","events","pagenum"],
+  methods: {
+    putdescription (rlg) {
+      for (var key in this.events[rlg]) {
+        event[key] = this.events[rlg][key]
+      }
+    },
+    put (rolling) {
+      let name = 'event_name'
+      let start = 'start_date'
+      let end = 'end_date'
+      console.log(this.events)
+      this.index = rolling + this.roll * (this.pagenum - 1) - 1
+      this.eventname = this.events[this.index][name]
+      console.log(this.eventname)
+      this. eventstart_date = this.events[this.index][start]
+      this. eventend_date = this.events[this.index][end]
+    }
+  }
 }
 </script>
 
@@ -104,15 +128,6 @@ export default {
 .modal-default-button {
   float: right;
 }
-
-/*
- * The following styles are auto-applied to elements with
- * transition="modal" when their visibility is toggled
- * by Vue.js.
- *
- * You can easily play with the modal transition by editing
- * these styles.
- */
 
 .modal-enter {
   opacity: 0;
