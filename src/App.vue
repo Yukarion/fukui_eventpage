@@ -41,7 +41,7 @@
 
 <script>
 import EventInfo from './components/EventInfo.vue'
-import axios from 'axios'
+import axios from 'c:/workspace/tmp/fukui_eventpage/node_modules/axios'
 
 export default {
   components: {

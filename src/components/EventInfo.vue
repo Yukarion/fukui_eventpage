@@ -1,12 +1,14 @@
 <template>
     <ul id="event-info" class="eventinfo">
         <li v-for="rolling in roll" v-bind:key= "rolling.id" >
-          <h4 id="event-name">{{put(rolling).eventname}}</h4>
-          <h6 id= "event-date">{{put(rolling).eventstart_date}}～{{put(rolling).eventend_date}}</h6>
+          <div>
+          </div>
+          <h4 id="event-name">{{eventname[rolling]}}</h4>
+          <h6 id= "event-date">{{event_start_date[rolling]}}～{{event_end_date[rolling]}}</h6>
           <div id="modalOpen">
-            <button id="show-modal" v-on:click="showModal = true,putdescription(rolling)">詳細</button>
+            <button id="show-modal" v-on:click="putdescription(rolling)">詳細</button>
             <modal v-if="showModal" v-on:close="showModal = false">
-              <h3 slot="header">{{eventname}}</h3>
+              <h3 slot="header">{{eventname[rolling]}}</h3>
               <h2 slot="body">
                 <p id="description">内容：{{event.description}}</p>
                 <p id="category">カテゴリ：{{event.category}}</p>
@@ -46,30 +48,34 @@
               </div>
             </transition>
           </script>
-      </ul>
+        </ul>
 </template>
 
 <script>
 import Vue from 'vue'
+
 Vue.component('modal', {
   template: '#modal-template'
 })
+
 export default {
   data () {
     return {
       showModal: false,
       event: {},
-      eventname: {},
-      eventstart_date: {},
-      eventend_date: {},
-      index: 0 
+      eventname: [],
+      event_start_date: [],
+      event_end_date: [],
+      index: 0
     }
   },
-  props: ["roll","events","pagenum"],
+  props: ['roll', 'events', 'pagenum'],
   methods: {
     putdescription (rlg) {
+      this.showModal = true
       for (var key in this.events[rlg]) {
         event[key] = this.events[rlg][key]
+        console.log(event[key])
       }
     },
     put (rolling) {
@@ -78,10 +84,10 @@ export default {
       let end = 'end_date'
       console.log(this.events)
       this.index = rolling + this.roll * (this.pagenum - 1) - 1
-      this.eventname = this.events[this.index][name]
-      console.log(this.eventname)
-      this. eventstart_date = this.events[this.index][start]
-      this. eventend_date = this.events[this.index][end]
+      this.eventname[rolling] = this.events[this.index][name]
+      this.eventstart_date[rolling] = this.events[this.index][start]
+      this.eventend_date[rolling] = this.events[this.index][end]
+      console.log(this.eventname[rolling])
     }
   }
 }
