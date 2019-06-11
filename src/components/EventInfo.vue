@@ -7,12 +7,20 @@
             <modal v-if="showModal" v-on:close="showModal = false">
               <h3 slot="header">{{event_name}}</h3>
               <h5 slot="body">
-                <p id="event-description">内容：{{event["description"]}}</p>
+                <p id="description">内容：{{event["description"]}}</p>
                 <p id="category">カテゴリ：{{event["category"]}}</p>
                 <p id="remarks">備考：{{event["remarks"]}}</p>
                 <p id="event_place">場所：{{event["event_place"]}}</p>
-                <p id="event_date">日時：{{event["start_date"]}}～{{event.end_date}}</p>
+                <p id="event_date">日時：{{event["start_date"]}}～{{event["end_date"]}}</p>
+                <p id="event_place_url">URL：{{event["event_place_url"]}}</p>
+                <p id="transportation">アクセス：{{event["transportation"]}}</p>
                 </h5>
+              <h6 slot="footer">
+                <p id="contact">連絡先：{{event["contact"]}}</p>
+                <p id="contact_phone_number">電話番号：{{event["contact_phone_number"]}}</p>
+                <p id="mail_address">メールアドレス：{{event["mail_address"]}}</p>
+                <button v-on:click="showModal = false">閉じる</button>
+              </h6>
             </modal>
           </div>
                   <!--modal from vue.js official-->
@@ -66,6 +74,17 @@ export default {
     }
   },
   props: ['rolling', 'events', 'pagenum', 'roll'],
+  method: {
+    change () {
+      this.index = this.rolling + this.roll * (this.pagenum - 1)
+      this.event_name = this.events[this.index].event_name
+      this.event_start_date = this.events[this.index].start_date
+      this.event_end_date = this.events[this.index].end_date
+      for (var key in this.events[this.index]) {
+        this.event[key] = this.events[this.index][key]
+      }
+    }
+  },
   created () {
     this.index = this.rolling + this.roll * (this.pagenum - 1)
     this.event_name = this.events[this.index].event_name
@@ -81,7 +100,6 @@ export default {
       this.event_name = this.events[this.index].event_name
       this.event_start_date = this.events[this.index].start_date
       this.event_end_date = this.events[this.index].end_date
-      console.log(this.event_start_date)
       for (var key in this.events[this.index]) {
         this.event[key] = this.events[this.index][key]
       }
@@ -115,6 +133,7 @@ export default {
 .modal-wrapper {
   display: table-cell;
   vertical-align: middle;
+  overflow: scroll
 }
 
 .modal-container {

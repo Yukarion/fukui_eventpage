@@ -11,7 +11,8 @@
       <div id="category">
         <h3>カテゴリ検索</h3>
         <select v-model="selected">
-          <option disabled value="">選択してください</option>
+          <option disabled value=""></option>
+          <option>選択してください</option>
           <option>音楽</option>
           <option>歴史</option>
           <option>スポーツ</option>
@@ -25,9 +26,9 @@
         </select>
       </div>
       <div id="changeDisplay">
-        <button v-on:click="rolling(10)">10件表示</button>
-        <button v-on:click="rolling(30)">30件表示</button>
-        <button v-on:click="rolling(events.length)">全件表示</button>
+        <button v-on:click="displayChange(10)">10件表示</button>
+        <button v-on:click="displayChange(30)">30件表示</button>
+        <button v-on:click="displayChange(events.length)">全件表示</button>
       </div>
       <div v-if="pageexist">
         <li v-for="pagenumber in page" v-bind:key="pagenumber" id= "paging" >
@@ -62,7 +63,7 @@ export default {
       page: null,
       pageexist: true,
       pagenum: 1,
-      selected: '',
+      selected: '選択してください',
       message: '',
       rollid: [],
       rollkeep: 10,
@@ -76,80 +77,92 @@ export default {
         res = json.data
       })
     this.events = res
-    this.evenum = this.events.length
     this.eventsfilter = res
-    if (this.evenum % this.roll === 0) {
-      this.page = Math.floor(this.evenum / this.roll)
-    } else {
-      this.page = Math.floor(this.evenum / this.roll + 1)
-    }
+    this.evenum = this.events.length
     for (let i = 0; i < this.evenum; i++) {
       this.eventsfilter[i].id = i
     }
-    for (let t = 0; t < this.roll; t++) {
-      this.rollid[t] = t
-    }
-    console.log(this.eventsfilter)
+    this.rolling(10)
+    console.log(this.events)
   },
   methods: {
+    displayChange (pageLeng) {
+      this.rollkeep = pageLeng
+      this.pagenum = 1
+      this.rolling(pageLeng)
+    },
     rolling (pageLeng) {
       this.roll = pageLeng
       this.evenum = this.eventsfilter.length
-      if (this.evenum > this.roll){
+      if (this.evenum > this.roll) {
         if (this.evenum % this.roll === 0) {
           this.page = Math.floor(this.evenum / this.roll)
         } else {
           this.page = Math.floor(this.evenum / this.roll + 1)
         }
         this.pageexist = true
-        for (let i = 0; i < this.evenum; i++) {
-          this.eventslength[i].id = i
-        }
         this.rollid = []
         for (let t = 0; t < this.roll; t++) {
           this.rollid[t] = t
         }
-        this.pagenum = 1
-      }else{
+      } else {
         this.roll = this.evenum
         this.rollid = []
-        for(let t = 0;t < this.evenum; t++){
+        for (let t = 0; t < this.evenum; t++) {
           this.rollid[t] = t
-          console.log(t)
         }
         this.pageexist = false
       }
     },
     gopage (pagenumber) {
-      if (pagenumber === this.page && pagenumber * this.roll !== this.evenum) {
-        console.log(this.evenum - (pagenumber - 1) * this.roll)
+      this.pagenum = pagenumber
+      if (pagenumber === this.page) {
+        let lastRoll = this.evenum - (pagenumber - 1) * this.roll
         this.rollid = []
-        for (let t = 0; t < (this.evenum - (pagenumber - 1) * this.roll); t++) {
+        for (let t = 0; t < lastRoll; t++) {
           this.rollid[t] = t
         }
+      } else {
+        this.rolling(this.roll)
       }
-      this.pagenum = pagenumber
-      console.log(this.pagenum)
     }
   },
   watch: {
     message: function () {
-      this.roll = 10
       this.pagenum = 1
       this.evenum = this.events.length
       this.eventsfilter = []
-      if(this.message === 0){
+      if (this.message === '') {
         this.eventsfilter = this.events
-      }else{
-      for (let i = 0; i < this.evenum; i++) {
-        let event = this.events[i]
-        if (event.event_name.indexOf(this.message) !== -1) {
-          this.eventsfilter.push(event)
+      } else {
+        for (let i = 0; i < this.evenum; i++) {
+          let event = this.events[i]
+          if (event.event_name.indexOf(this.message) !== -1 ||
+              event.address.indexOf(this.message) !== -1 ||
+              event.description.indexOf(this.message) !== -1 ||
+              event.category.indexOf(this.message) !== -1 ||
+              event.event_place.indexOf(this.message) !== -1) {
+            this.eventsfilter.push(event)
+          }
         }
       }
+      this.rolling(this.rollkeep)
+    },
+    selected: function () {
+      this.pagenum = 1
+      this.evenum = this.events.length
+      this.eventsfilter = []
+      if (this.selected === '選択してください') {
+        this.eventsfilter = this.events
+      } else {
+        for (let i = 0; i < this.evenum; i++) {
+          let event = this.events[i]
+          if (event.category.indexOf(this.selected) !== -1) {
+            this.eventsfilter.push(event)
+          }
+        }
       }
-      console.log(this.eventsfilter)
-      this.rolling(this.roll)
+      this.rolling(this.rollkeep)
     }
   }
 }
