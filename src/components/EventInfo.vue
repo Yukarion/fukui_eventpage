@@ -1,24 +1,20 @@
 <template>
     <ul id="event-info" class="eventinfo">
-        <li v-for="rolling in roll" v-bind:key= "rolling.id" >
-          <div>
-          </div>
-          <h4 id="event-name">{{eventname[rolling]}}</h4>
-          <h6 id= "event-date">{{event_start_date[rolling]}}～{{event_end_date[rolling]}}</h6>
+          <h4 id="event-name">{{event_name}}</h4>
+          <h6 id= "event-date">{{event_start_date}}～{{event_end_date}}</h6>
           <div id="modalOpen">
-            <button id="show-modal" v-on:click="putdescription(rolling)">詳細</button>
+            <button id="show-modal" v-on:click="showModal = true">詳細</button>
             <modal v-if="showModal" v-on:close="showModal = false">
-              <h3 slot="header">{{eventname[rolling]}}</h3>
-              <h2 slot="body">
-                <p id="description">内容：{{event.description}}</p>
-                <p id="category">カテゴリ：{{event.category}}</p>
-                <p id="remarks">備考：{{event.remarks}}</p>
-                <p id="event_place">場所：{{event.event_place}}</p>
-                <p id="event_date">日時：{{event.start_date}}～{{event.end_date}}</p>
-                </h2>
+              <h3 slot="header">{{event_name}}</h3>
+              <h5 slot="body">
+                <p id="event-description">内容：{{event["description"]}}</p>
+                <p id="category">カテゴリ：{{event["category"]}}</p>
+                <p id="remarks">備考：{{event["remarks"]}}</p>
+                <p id="event_place">場所：{{event["event_place"]}}</p>
+                <p id="event_date">日時：{{event["start_date"]}}～{{event.end_date}}</p>
+                </h5>
             </modal>
           </div>
-        </li>
                   <!--modal from vue.js official-->
           <script type="text/x-template" id="modal-template">
             <transition name="modal">
@@ -63,31 +59,41 @@ export default {
     return {
       showModal: false,
       event: {},
-      eventname: [],
-      event_start_date: [],
-      event_end_date: [],
+      event_name: String,
+      event_start_date: String,
+      event_end_date: String,
       index: 0
     }
   },
-  props: ['roll', 'events', 'pagenum'],
-  methods: {
-    putdescription (rlg) {
-      this.showModal = true
-      for (var key in this.events[rlg]) {
-        event[key] = this.events[rlg][key]
-        console.log(event[key])
+  props: ['rolling', 'events', 'pagenum', 'roll'],
+  created () {
+    this.index = this.rolling + this.roll * (this.pagenum - 1)
+    this.event_name = this.events[this.index].event_name
+    this.event_start_date = this.events[this.index].start_date
+    this.event_end_date = this.events[this.index].end_date
+    for (var key in this.events[this.index]) {
+      this.event[key] = this.events[this.index][key]
+    }
+  },
+  watch: {
+    pagenum: function () {
+      this.index = this.rolling + this.roll * (this.pagenum - 1)
+      this.event_name = this.events[this.index].event_name
+      this.event_start_date = this.events[this.index].start_date
+      this.event_end_date = this.events[this.index].end_date
+      console.log(this.event_start_date)
+      for (var key in this.events[this.index]) {
+        this.event[key] = this.events[this.index][key]
       }
     },
-    put (rolling) {
-      let name = 'event_name'
-      let start = 'start_date'
-      let end = 'end_date'
-      console.log(this.events)
-      this.index = rolling + this.roll * (this.pagenum - 1) - 1
-      this.eventname[rolling] = this.events[this.index][name]
-      this.eventstart_date[rolling] = this.events[this.index][start]
-      this.eventend_date[rolling] = this.events[this.index][end]
-      console.log(this.eventname[rolling])
+    events: function () {
+      this.index = this.rolling + this.roll * (this.pagenum - 1)
+      this.event_name = this.events[this.index].event_name
+      this.event_start_date = this.events[this.index].start_date
+      this.event_end_date = this.events[this.index].end_date
+      for (var key in this.events[this.index]) {
+        this.event[key] = this.events[this.index][key]
+      }
     }
   }
 }

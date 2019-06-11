@@ -25,16 +25,23 @@
         </select>
       </div>
       <div id="changeDisplay">
-        <button v-on:click="numget(),rolling('10')">10件表示</button>
-        <button v-on:click="numget(),rolling('30')">30件表示</button>
-        <button v-on:click="numget(),rolling('evenum')">全件表示</button>
+        <button v-on:click="rolling(10)">10件表示</button>
+        <button v-on:click="rolling(30)">30件表示</button>
+        <button v-on:click="rolling(events.length)">全件表示</button>
       </div>
-      <div v-if="pageexe">
-        <li v-for="pagenum in page" v-bind:key="pagenum" id= "paging" >
-          <button v-on:click="gopage(pagenum)">{{pagenum}}</button>
+      <div v-if="pageexist">
+        <li v-for="pagenumber in page" v-bind:key="pagenumber" id= "paging" >
+          <button v-on:click="gopage(pagenumber)">{{pagenumber}}</button>
         </li>
       </div>
-      <event-info v-bind:events="events" v-bind:roll="roll" v-bind:pagenum="pagenum"></event-info>
+      <event-info
+        v-for="rolling in rollid"
+        v-bind:rolling="rolling"
+        v-bind:events="eventsfilter"
+        v-bind:pagenum="pagenum"
+        v-bind:key="eventsfilter[rolling].id"
+        v-bind:roll="roll"
+      ></event-info>
     </div>
   </div>
 </template>
@@ -53,10 +60,13 @@ export default {
       evenum: null,
       roll: 10,
       page: null,
-      pageexe: true,
+      pageexist: true,
       pagenum: 1,
       selected: '',
-      message: ''
+      message: '',
+      rollid: [],
+      rollkeep: 10,
+      eventsfilter: []
     }
   },
   async created () {
@@ -67,26 +77,79 @@ export default {
       })
     this.events = res
     this.evenum = this.events.length
-    this.page = Math.floor(this.evenum / this.roll)
+    this.eventsfilter = res
+    if (this.evenum % this.roll === 0) {
+      this.page = Math.floor(this.evenum / this.roll)
+    } else {
+      this.page = Math.floor(this.evenum / this.roll + 1)
+    }
+    for (let i = 0; i < this.evenum; i++) {
+      this.eventsfilter[i].id = i
+    }
+    for (let t = 0; t < this.roll; t++) {
+      this.rollid[t] = t
+    }
+    console.log(this.eventsfilter)
   },
   methods: {
-    numget () {
+    rolling (pageLeng) {
+      this.roll = pageLeng
+      this.evenum = this.eventsfilter.length
+      if (this.evenum > this.roll){
+        if (this.evenum % this.roll === 0) {
+          this.page = Math.floor(this.evenum / this.roll)
+        } else {
+          this.page = Math.floor(this.evenum / this.roll + 1)
+        }
+        this.pageexist = true
+        for (let i = 0; i < this.evenum; i++) {
+          this.eventslength[i].id = i
+        }
+        this.rollid = []
+        for (let t = 0; t < this.roll; t++) {
+          this.rollid[t] = t
+        }
+        this.pagenum = 1
+      }else{
+        this.roll = this.evenum
+        this.rollid = []
+        for(let t = 0;t < this.evenum; t++){
+          this.rollid[t] = t
+          console.log(t)
+        }
+        this.pageexist = false
+      }
+    },
+    gopage (pagenumber) {
+      if (pagenumber === this.page && pagenumber * this.roll !== this.evenum) {
+        console.log(this.evenum - (pagenumber - 1) * this.roll)
+        this.rollid = []
+        for (let t = 0; t < (this.evenum - (pagenumber - 1) * this.roll); t++) {
+          this.rollid[t] = t
+        }
+      }
+      this.pagenum = pagenumber
+      console.log(this.pagenum)
+    }
+  },
+  watch: {
+    message: function () {
+      this.roll = 10
+      this.pagenum = 1
       this.evenum = this.events.length
-    },
-    rolling (roll) {
-      if (this.evenum % roll === 0) {
-        this.page = Math.floor(this.evenum / roll)
-      } else {
-        this.page = Math.floor(this.evenum / roll + 1)
+      this.eventsfilter = []
+      if(this.message === 0){
+        this.eventsfilter = this.events
+      }else{
+      for (let i = 0; i < this.evenum; i++) {
+        let event = this.events[i]
+        if (event.event_name.indexOf(this.message) !== -1) {
+          this.eventsfilter.push(event)
+        }
       }
-      if (roll === this.evenum) {
-        this.pageexe = false
-      } else {
-        this.pageexe = true
       }
-    },
-    gopage (pgenum) {
-      this.pagenum = pgenum
+      console.log(this.eventsfilter)
+      this.rolling(this.roll)
     }
   }
 }
