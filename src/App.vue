@@ -1,39 +1,45 @@
 <template>
   <div id="app">
-    <h1 id= "title">
-      福井のイベント情報
-    </h1>
-      <div id= "app">
-      <div id="keySerch">
-        <h3>キーワード検索</h3>
-        <input v-model="message" placeholder="キーワードで検索を行います">
-      </div>
-      <div id="category">
-        <h3>カテゴリ検索</h3>
-        <select v-model="selected">
-          <option disabled value=""></option>
-          <option>選択してください</option>
-          <option>音楽</option>
-          <option>歴史</option>
-          <option>スポーツ</option>
-          <option>こども</option>
-          <option>文化・芸術</option>
-          <option>食・健康</option>
-          <option>自然・環境</option>
-          <option>講座・セミナー</option>
-          <option>観光・祭り</option>
-          <option>その他</option>
-        </select>
-      </div>
+    <div id= "title">福井のイべント情報</div>
+      <div id= "app"> 
+        <table id= "search">
+          <tr>
+            <td id="key-search">
+              <div>
+                <h3>キーワード検索</h3>
+                <input v-model="message" placeholder="キーワードで検索を行います">
+              </div>
+            </td>
+            <td id="category">
+              <div>
+                <h3>カテゴリ検索</h3>
+                <select v-model="selected">
+                   <option disabled value=""></option>
+                   <option>選択してください</option>
+                  <option>音楽</option>
+                  <option>歴史</option>
+                  <option>スポーツ</option>
+                  <option>こども</option>
+                  <option>文化・芸術</option>
+                  <option>食・健康</option>
+                 <option>自然・環境</option>
+                 <option>講座・セミナー</option>
+                 <option>観光・祭り</option>
+                 <option>その他</option>
+                </select>
+              </div>
+            </td>
+          </tr>
+        </table>
       <div id="changeDisplay">
         <button v-on:click="displayChange(10)">10件表示</button>
         <button v-on:click="displayChange(30)">30件表示</button>
         <button v-on:click="displayChange(events.length)">全件表示</button>
       </div>
-      <div v-if="pageexist">
-        <li v-for="pagenumber in page" v-bind:key="pagenumber" id= "paging" >
-          <button v-on:click="gopage(pagenumber)">{{pagenumber}}</button>
-        </li>
+      <div v-if="pageexist" id= "buttoncase">
+        <div v-for="pagenumber in page" v-bind:key="pagenumber" id= "page-change">
+          <button class= "paging" v-on:click="gopage(pagenumber)">{{pagenumber}}</button>
+        </div>
       </div>
       <event-info
         v-for="rolling in rollid"
@@ -175,6 +181,25 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+}
+#category {
+  background-color:rgb(250, 203, 117) ;
+}
+#key-search {
+  background-color:rgb(255, 223, 118)
+}
+#page-change {
+  margin: 1%
+}
+#buttoncase{
+  display:flex;
+  justify-content:center;
+}
+#title {
+  background-color: rgb(40, 235, 33);
+  display: block;
+  font-size: xx-large;
+  font-weight: bold;
+  height: 100%;
 }
 </style>
